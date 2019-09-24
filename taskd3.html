@@ -1,0 +1,156 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+
+<script src="taskd3.js" type="text/javascript"></script>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+   padding: 5px;
+   background-color: #eee;
+}
+tbody{
+	text-align: center;
+}
+</style>
+
+
+
+
+<table align= 'center' style="100%">
+	<thead>
+
+	<tr>
+		<th>Rollno</th>
+		<th>StudentName</th>
+		<th>CollegeName</th>
+		<th>Marks</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>1</td>
+		<td>Naruto</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+	<tr>
+		<td>165</td>
+		<td>Naruto324</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+	<tr>
+		<td>164</td>
+		<td>Naruto34</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+	<tr>
+		<td>1342</td>
+		<td>Narutoe3</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+	<tr>
+		<td>134</td>
+		<td>Naruto32</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+
+
+
+
+
+
+	<tr>
+		<td>2</td>
+		<td>Naruto32</td>
+		<td colspan="2">col</td>
+	</tr>
+
+
+
+	<tr>
+		<td rowspan="2">3</td>
+		<td>Naruto3</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+
+	<tr>
+		<td>Naruto3</td>
+		<td>vit</td>
+		<td>99</td>
+	</tr>
+
+
+
+
+
+
+	</tbody>
+
+</table>
+</head>
+<body>
+
+
+
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+ <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+   padding: 5px;
+   background-color: #eee;
+}
+tbody{
+	text-align: center;
+}
+</style>
+<script type="text/javascript">
+	data =[ ['name','rno','college name','sem'] ,['raj','1','IIT','5'],['raj','1','IIT','5'] ];
+	function filltable()
+	{
+	
+		
+			document.write("<table border='2px'>");
+ 
+		for(i=0;i<data.length;i++)
+		{
+			document.write("<tr>");
+			for(j=0;j<data[i].length;j++)
+			{
+				document.write("<td>"+data[i][j]+"</td>");
+ 
+			}
+			document.write("</tr>");
+ 
+		}
+ 
+ 
+			document.write("</table>");
+		
+	}
+ 
+ 
+</script>
+ 
+</head>
+ 
+ 
+<body onload="filltable()">
+ 
+</body>
+ 
+</html>
