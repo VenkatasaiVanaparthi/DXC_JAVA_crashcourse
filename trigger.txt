@@ -1,0 +1,416 @@
+
+SQL*Plus: Release 18.0.0.0.0 - Production on Mon Sep 23 09:58:40 2019
+Version 18.4.0.0.0
+
+Copyright (c) 1982, 2018, Oracle.  All rights reserved.
+
+Enter user-name: conn /as sysdba
+Enter password:
+
+Connected to:
+Oracle Database 18c Express Edition Release 18.0.0.0.0 - Production
+Version 18.4.0.0.0
+
+SQL> grant create session to dxc;
+
+Grant succeeded.
+
+SQL> grant dba to dxc;
+
+Grant succeeded.
+
+SQL> create schema authorization dxc;
+create schema authorization dxc
+*
+ERROR at line 1:
+ORA-02421: missing or invalid schema authorization identifier
+
+
+SQL> create schema authorization to dxc;
+create schema authorization to dxc
+                            *
+ERROR at line 1:
+ORA-02421: missing or invalid schema authorization identifier
+
+
+SQL> grant create schema authorization to dxc;
+grant create schema authorization to dxc
+      *
+ERROR at line 1:
+ORA-00990: missing or invalid privilege
+
+
+SQL> conn dxc;
+Enter password:
+Connected.
+SQL> create schema authorization dxc;
+
+Schema created.
+
+SQL> select * from tab;
+
+no rows selected
+
+SQL> create table dept(
+  2  deptid int,
+  3  dept_name varchar(10))
+  4  ;
+
+Table created.
+
+SQL> create table emp(
+  2  emp_id int,
+  3  emp_name varchar(10),
+  4  age int,
+  5  dept_id int);
+
+Table created.
+
+SQL> alter table dept add primary key(deptid);
+
+Table altered.
+
+SQL> alter table dept(dept_name in ('sales','marketing');
+alter table dept(dept_name in ('sales','marketing')
+                *
+ERROR at line 1:
+ORA-01735: invalid ALTER TABLE option
+
+
+SQL> alter table dept add check(dept_name in ('sales','marketing');
+alter table dept add check(dept_name in ('sales','marketing')
+                                                            *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> alter table dept add check(dept_name in ('sales','marketing'));
+
+Table altered.
+
+SQL> alter table emp add deptidfk foreign key(dept_id) references dept(deptid);
+alter table emp add deptidfk foreign key(dept_id) references dept(deptid)
+                                     *
+ERROR at line 1:
+ORA-01735: invalid ALTER TABLE option
+
+
+SQL> alter table emp add foreign key(dept_id) references dept(deptid);
+
+Table altered.
+
+SQL> alter table emp add check(18<emp_age<50);
+alter table emp add check(18<emp_age<50)
+                                    *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> alter table emp add check(18<age<50);
+alter table emp add check(18<age<50)
+                                *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> alter table emp add constraint chk check(age between 18 and 50);
+
+Table altered.
+
+SQL> create trigger trgDemo(
+  2  ;
+  3  );
+  4
+  5
+  6  alter table emp add constraint chk check(age between 18 and 50);
+  7  ;;;
+  8
+  9  )));;;
+ 10  clear scr
+ 11  ;
+ 12
+ 13
+ 14  /
+create trigger trgDemo(
+                      *
+ERROR at line 1:
+ORA-04071: missing BEFORE, AFTER or INSTEAD OF keyword
+
+
+SQL> create table trgTestTab(
+  2  emp_id int,
+  3  emp_name varchar(10),
+  4  age int,
+  5  dept varchar(10);
+dept varchar(10)
+               *
+ERROR at line 5:
+ORA-00907: missing right parenthesis
+
+
+SQL> desc dept;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTID                                    NOT NULL NUMBER(38)
+ DEPT_NAME                                          VARCHAR2(10)
+
+SQL> insert into dept values(1,'cs');
+insert into dept values(1,'cs')
+*
+ERROR at line 1:
+ORA-02290: check constraint (DXC.SYS_C007633) violated
+
+
+SQL> insert into dept values(1,'sales');
+
+1 row created.
+
+SQL> desc emp;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMP_ID                                             NUMBER(38)
+ EMP_NAME                                           VARCHAR2(10)
+ AGE                                                NUMBER(38)
+ DEPT_ID                                            NUMBER(38)
+
+SQL> create table empBackup(emp_id int, emp_name varchar(10), age int, dept_id int);
+
+Table created.
+
+SQL> create or replace trigger trgemp
+  2  after insert
+  3  on emp
+  4  for each row
+  5  begin
+  6  insert into empBackup values (:new.emp_id,:new.emp_name,:new.age,:new.dept_id = :new.emp_id,:new.emp_name,:new.age,:new.dept_id)
+  7  ;
+  8  /
+
+Warning: Trigger created with compilation errors.
+
+SQL> show error
+Errors for TRIGGER TRGEMP:
+
+LINE/COL ERROR
+-------- -----------------------------------------------------------------
+2/1      PL/SQL: SQL Statement ignored
+2/79     PL/SQL: ORA-00917: missing comma
+3/1      PLS-00103: Encountered the symbol "end-of-file" when expecting
+         one of the following:
+         ( begin case declare end exception exit for goto if loop mod
+         null pragma raise return select update while with
+         <an identifier> <a double-quoted delimited-identifier>
+         <a bind variable> << continue close current delete fetch lock
+         insert open rollback savepoint set sql execute commit forall
+         merge pipe purge json_exists json_value json_query
+         json_object json_array
+
+LINE/COL ERROR
+-------- -----------------------------------------------------------------
+
+SQL> insert into emp values(23,'vvs',22,1);
+insert into emp values(23,'vvs',22,1)
+            *
+ERROR at line 1:
+ORA-04098: trigger 'DXC.TRGEMP' is invalid and failed re-validation
+
+
+SQL> desc empBackup;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMP_ID                                             NUMBER(38)
+ EMP_NAME                                           VARCHAR2(10)
+ AGE                                                NUMBER(38)
+ DEPT_ID                                            NUMBER(38)
+
+SQL> desc emp;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMP_ID                                             NUMBER(38)
+ EMP_NAME                                           VARCHAR2(10)
+ AGE                                                NUMBER(38)
+ DEPT_ID                                            NUMBER(38)
+
+SQL> ;
+  1* insert into emp values(23,'vvs',22,1)
+SQL> SQL*Plus: Release 18.0.0.0.0 - Production on Mon Sep 23 09:58:40 2019
+SP2-0734: unknown command beginning "SQL*Plus: ..." - rest of line ignored.
+SQL> Version 18.4.0.0.0
+SP2-0734: unknown command beginning "Version 18..." - rest of line ignored.
+SQL>
+SQL> Copyright (c) 1982, 2018, Oracle.  All rights reserved.
+SP2-0734: unknown command beginning "Copyright ..." - rest of line ignored.
+SQL>
+SQL> Enter user-name: conn /as sysdba
+SP2-0734: unknown command beginning "Enter user..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL> Enter password:
+SP2-0734: unknown command beginning "Enter pass..." - rest of line ignored.
+SQL>
+SQL> Connected to:
+SP2-0734: unknown command beginning "Connected ..." - rest of line ignored.
+SQL> Oracle Database 18c Express Edition Release 18.0.0.0.0 - Production
+SP2-0734: unknown command beginning "Oracle Dat..." - rest of line ignored.
+SQL> Version 18.4.0.0.0
+SP2-0734: unknown command beginning "Version 18..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>
+SQL> SQL> grant create session to dxc;
+SP2-0734: unknown command beginning "SQL> grant..." - rest of line ignored.
+SQL>
+SQL> Grant succeeded.
+  2
+SQL> SQL> grant dba to dxc;
+SP2-0734: unknown command beginning "SQL> grant..." - rest of line ignored.
+SQL>
+SQL> Grant succeeded.
+  2
+SQL> SQL> create schema authorization dxc;
+SP2-0734: unknown command beginning "SQL> creat..." - rest of line ignored.
+SQL> create schema authorization dxc
+  2  *
+  3  ERROR at line 1:
+  4  ORA-02421: missing or invalid schema authorization identifier
+  5
+SQL>
+SQL> SQL> create schema authorization to dxc;
+SP2-0734: unknown command beginning "SQL> creat..." - rest of line ignored.
+SQL> create schema authorization to dxc
+  2                              *
+  3  ERROR at line 1:
+  4  ORA-02421: missing or invalid schema authorization identifier
+  5
+SQL>
+SQL> SQL> grant create schema authorization to dxc;
+SP2-0734: unknown command beginning "SQL> grant..." - rest of line ignored.
+SQL> grant create schema authorization to dxc
+  2        *
+  3  ERROR at line 1:
+  4  ORA-00990: missing or invalid privilege
+  5
+SQL>
+SQL> SQL> conn dxc;
+SP2-0734: unknown command beginning "SQL> conn ..." - rest of line ignored.
+SQL> Enter password:
+SP2-0734: unknown command beginning "Enter pass..." - rest of line ignored.
+SQL> Connected.
+SP2-0042: unknown command "Connected." - rest of line ignored.
+SQL> SQL> create schema authorization dxc;
+SP2-0734: unknown command beginning "SQL> creat..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>
+SQL> Schema created.
+SP2-0734: unknown command beginning "Schema cre..." - rest of line ignored.
+SQL>
+SQL> SQL> select * from tab;
+SP2-0734: unknown command beginning "SQL> selec..." - rest of line ignored.
+SQL>
+SQL> no rows selected
+SP2-0734: unknown command beginning "no rows se..." - rest of line ignored.
+SQL>
+SQL> SQL> create table dept(
+SP2-0734: unknown command beginning "SQL> creat..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>   2  deptid int,
+SQL>   3  dept_name varchar(10))
+SQL>   4  ;
+  4* ORA-00990: missing or invalid privilege
+SQL>
+SQL> Table created.
+SP2-0734: unknown command beginning "Table crea..." - rest of line ignored.
+SQL>
+SQL> SQL> create table emp(
+SP2-0734: unknown command beginning "SQL> creat..." - rest of line ignored.
+SQL>   2  emp_id int,
+SQL>   3  emp_name varchar(10),
+SQL>   4  age int,
+SQL>   5  dept_id int);
+SQL>
+SQL> Table created.
+SP2-0734: unknown command beginning "Table crea..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table dept add primary key(deptid);
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>
+SQL> Table altered.
+SP2-0734: unknown command beginning "Table alte..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table dept(dept_name in ('sales','marketing');
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL> alter table dept(dept_name in ('sales','marketing')
+  2                  *
+  3  ERROR at line 1:
+  4  ORA-01735: invalid ALTER TABLE option
+  5
+SQL>
+SQL> SQL> alter table dept add check(dept_name in ('sales','marketing');
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL> alter table dept add check(dept_name in ('sales','marketing')
+  2                                                              *
+  3  ERROR at line 1:
+  4  ORA-00907: missing right parenthesis
+  5
+SQL>
+SQL> SQL> alter table dept add check(dept_name in ('sales','marketing'));
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL>
+SQL> Table altered.
+SP2-0734: unknown command beginning "Table alte..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table emp add deptidfk foreign key(dept_id) references dept(deptid);
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL> alter table emp add deptidfk foreign key(dept_id) references dept(deptid)
+  2                                       *
+  3  ERROR at line 1:
+  4  ORA-01735: invalid ALTER TABLE option
+  5
+SQL>
+SQL> SQL> alter table emp add foreign key(dept_id) references dept(deptid);
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL>
+SQL> Table altered.
+SP2-0734: unknown command beginning "Table alte..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table emp add check(18<emp_age<50);
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SQL> alter table emp add check(18<emp_age<50)
+  2                                      *
+  3  ERROR at line 1:
+  4  ORA-00907: missing right parenthesis
+  5
+SQL>
+
+
+
+SQL> create or replace trigger trgemp
+  2      after insert
+  3      on emp
+  4      for each row
+  5      begin
+  6      insert into empBackup values (:new.emp_id,:new.emp_name,:new.age,:new.dept_id)
+  7     ;
+  8    end;
+  9      /
+
+Trigger created.
+
+SQL> insert into emp values(22, 'sum',22,1);
+
+1 row created.
+
+SQL> select * from empBackup;
+
+    EMP_ID EMP_NAME          AGE    DEPT_ID
+---------- ---------- ---------- ----------
+        22 sum                22          1
+
+
+
+
+SQL>
